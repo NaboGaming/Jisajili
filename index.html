@@ -5,14 +5,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Display Name Example</title>
-</head>
-<body>
-  <p="username"></p>
- <!-- Include the Firebase SDK -->
+   <!-- Include the Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
-  <script>
+</head>
+<body>
+  <p="username"></p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase ,ref ,update} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBPx4lzqapn6B3vBCmvslOYZne1-tOzFuQ",
+    authDomain: "authside.firebaseapp.com",
+    databaseURL: "https://authside-default-rtdb.firebaseio.com",
+    projectId: "authside",
+    storageBucket: "authside.appspot.com",
+    messagingSenderId: "255192020763",
+    appId: "1:255192020763:web:5b00341cd288eb24cac5be"
+  };
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const auth = getAuth();
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     // User is signed in.
