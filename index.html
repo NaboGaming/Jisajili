@@ -7,43 +7,22 @@
   <title>User Display Name Example</title>
 </head>
 <body>
-  <h1>Welcome to the Website</h1>
-  <h1>Welcome to the website, <span id="username-display"></span>!</h1>
+  <p="username"></p>
  <!-- Include the Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
   <script>
-     // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase ,set ,ref } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-  import { getAuth, createUserWithEmailAndPassword  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyBPx4lzqapn6B3vBCmvslOYZne1-tOzFuQ",
-    authDomain: "authside.firebaseapp.com",
-    databaseURL: "https://authside-default-rtdb.firebaseio.com",
-    projectId: "authside",
-    storageBucket: "authside.appspot.com",
-    messagingSenderId: "255192020763",
-    appId: "1:255192020763:web:5b00341cd288eb24cac5be"
-  };
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
-// Assume user is authenticated and user's UID is available
-var user = firebase.auth().currentUser;
-var uid = user.uid;
-
-// Reference to the user's data in the database
-var userRef = firebase.database().ref('users/' + uid);
-
-// Retrieve the user's name
-userRef.child('username').once('value', function(snapshot) {
-  var username = snapshot.val();
-  // Display the user's name on the website
-  document.getElementById('username-display').innerText = username;
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    // User is signed in.
+    var username = user.displayName;
+    // Display the username on your website's HTML
+    document.getElementById('username').innerText = "Welcome, " + username;
+  } else {
+    // No user is signed in.
+    // Handle the case when the user is not signed in
+  }
 });
   </script>
 </body>
