@@ -8,7 +8,7 @@
 </head>
 <body>
   <h1>Welcome to the Website</h1>
-  <h1>Welcome to the website, <span id="user-name"></span>!</h1>
+  <h1>Welcome to the website, <span id="username-display"></span>!</h1>
  <!-- Include the Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
@@ -32,12 +32,19 @@
   };
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+// Assume user is authenticated and user's UID is available
 var user = firebase.auth().currentUser;
-if (user) {
-  var userName = user.username;
-  // Use userName to update the website's UI
-  document.getElementById('user-name').textContent = userName;
-}
+var uid = user.uid;
+
+// Reference to the user's data in the database
+var userRef = firebase.database().ref('users/' + uid);
+
+// Retrieve the user's name
+userRef.child('username').once('value', function(snapshot) {
+  var username = snapshot.val();
+  // Display the user's name on the website
+  document.getElementById('username-display').innerText = username;
+});
   </script>
 </body>
 </html>
