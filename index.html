@@ -8,7 +8,7 @@
    <!-- Include the Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getDatabase ,ref ,update} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -38,21 +38,23 @@ firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     // User is signed in.
     var uid = user.uid;
-    // Retrieve the user's data from Firestore
-    firebase.firestore().collection('users').doc(uid).get()
-      .then(function(doc) {
-        if (doc.exists) {
-          var username = doc.data().name;
+    // Get a reference to the database
+    var database = firebase.database();
+    // Retrieve the user's data from Realtime Database
+    database.ref('users/' + uid).once('value')
+      .then(function(dataSnapshot) {
+        var userData = dataSnapshot.val();
+        if (userData) {
+          var username = userData.name;
           // Display the username on your website's HTML
           document.getElementById('username').innerText = "Welcome, " + username;
         } else {
-          // Document doesn't exist
           // Handle the case when the user data is not found
         }
       })
       .catch(function(error) {
-        // Error getting document
-        console.error("Error getting user document:", error);
+        // Error getting user data
+        console.error("Error getting user data:", error);
       });
   } else {
     // No user is signed in.
