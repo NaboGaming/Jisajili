@@ -34,15 +34,17 @@
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const auth = getAuth();
-
-    // Your user display name retrieval code here
-    var user = firebase.auth().currentUser;
-    if (user) {
-      var username = user.username;
-      document.getElementById('userDisplayName').innerHTML = 'Welcome, ' + username + '!';
-    } else {
-      document.getElementById('userDisplayName').innerHTML = 'Welcome, Guest!';
-    }
+    // Add a listener for authentication state changes
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    // User is signed in
+    var displayName = user.displayName;
+    document.getElementById('userDisplayName').innerHTML = 'Welcome, ' + displayName + '!';
+  } else {
+    // User is signed out
+    document.getElementById('userDisplayName').innerHTML = 'Welcome, Guest!';
+  }
+});
   </script>
 </body>
 </html>
