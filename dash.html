@@ -3,6 +3,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta id="theme-check" name="theme-color" content="black">
+    <link rel="stylesheet" type="text/css" href="bootstrap.css">
+<link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Jiunge Na NaboGaming | BetPlace</title>
 
@@ -31,7 +33,7 @@
             updateUserProfile(user);
         } else {
             // No user is signed in, prompt to create an account and log in
-            alert("Create Account & login");
+                          document.getElementById('customAlert').style.display = 'block';
             window.location.href = "index.html";
         }
     });
@@ -53,7 +55,18 @@
 <p id="userName"></p>
 <p id="userEmail"></p>
 <img id="userProfilePicture">
-
+<div id="customAlert" class="toast toast-bar toast-top rounded-l bg-red-dark shadow-bg shadow-bg-s" data-bs-delay="3000">
+<div class="align-self-center">
+<i class="icon icon-s bg-white color-red-dark rounded-l shadow-s bi bi-exclamation-triangle-fill font-22 me-3"></i>
+</div>
+<div class="align-self-center">
+<strong class="font-13 mb-n2">Hujajiunga Nasi</strong>
+<span class="font-10 mt-n1 opacity-70">Imeshindikana Njia Hii, Tafadhari Jisajili Sasa</span>
+</div>
+<div class="align-self-center ms-auto">
+<button type="button" class="btn-close btn-close-white me-2 m-auto font-9" data-bs-dismiss="toast"></button>
+</div>
+    </div>
 <script src="bootstrap.min.js"></script>
 <script src="custom.js"></script>
 </body></html>
