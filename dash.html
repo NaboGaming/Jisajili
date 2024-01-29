@@ -50,65 +50,30 @@ const userName2 = user.displayName;
 </script>
 <script defer type="module">
 import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
-const database = getDatabase(app); // Get a reference to the Firebase Realtime Database
+
+// Reference to the Firebase database
+const database = getDatabase(app);
 
 // Function to send a message
-function sendMessage() {
-    const messageInput = document.getElementById("messageInput");
-    const message = messageInput.value;
-    const uid = getCurrentUserUid(); // Call the function to get the current user's UID
-    if (uid) {
-        const messageData = {
-            uid: uid,
-            message: message,
-            timestamp: firebase.database.ServerValue.TIMESTAMP // Add a timestamp to the message
-        };
-
-        // Push the new message to the database
-        push(ref(database, 'public-messages'), messageData)
-            .then(() => {
-                // Clear the input field after sending the message
-                messageInput.value = "";
-            })
-            .catch((error) => {
-                console.error("Error sending message: ", error);
-                // Handle any errors that occur during the push operation
-            });
-    } else {
-        // Handle the case when the user is not signed in
-        console.log("User is not signed in");
-    }
-}
-
-// Function to display received messages
-function displayMessage(uid, message, timestamp) {
-    // Here, you can format and display the received messages as per your UI requirements
-    // For example, you can append the messages to the #messages div
-    const messageDiv = document.createElement("div");
-    messageDiv.textContent = message;
-    document.getElementById("messages").appendChild(messageDiv);
-}
-
-// Function to listen for new messages in the public chat
-function listenForMessages() {
-    const messagesRef = ref(database, 'public-messages');
-    onChildAdded(messagesRef, (snapshot) => {
-        const messageData = snapshot.val();
-        const { uid, message, timestamp } = messageData;
-        displayMessage(uid, message, timestamp);
+function sendMessage(message) {
+    const messagesRef = ref(database, 'public_messages'); // Reference to the 'public_messages' node in the database
+    push(messagesRef, {
+        sender: user.uid, // Sender's user ID
+        message: message,
+        timestamp: new Date().getTime() // Timestamp of the message
     });
 }
 
-// Call the function to start listening for new messages when the user is authenticated
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        updateUserProfile(user);
-        listenForMessages(); // Start listening for new messages when the user is authenticated
-    } else {
-        document.getElementById('customAlert').style.display = 'block';
-        window.location.href = "index.html";
-    }
+// Function to receive messages
+onChildAdded(ref(database, 'public_messages'), (snapshot) => {
+    const messageData = snapshot.val();
+    // Handle received message
+    console.log("Message received:", messageData.message);
+    console.log("Sent by:", messageData.sender);
 });
+
+// Example of sending a message
+sendMessage("Hello, world!");
 </script>
 </head>
 <body>
