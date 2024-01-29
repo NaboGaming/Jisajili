@@ -6,8 +6,9 @@
     <link rel="stylesheet" type="text/css" href="bootstrap.css">
 <link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>Jiunge Na NaboGaming | BetPlace</title>
-
+<title>Karibu NaboGaming | BetPlace</title>
+ <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js"></script>
 <script defer type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
     import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
@@ -57,6 +58,57 @@ const userName2 = user.displayName;
 <img id="userProfilePicture">
 
 <p id="userName2"></p>
+<h1>Welcome to the Public Chat</h1>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+    <script type="module">
+        const firebaseConfig = {
+    apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",
+    authDomain: "register-71bde.firebaseapp.com",
+    projectId: "register-71bde",
+    storageBucket: "register-71bde.appspot.com",
+    messagingSenderId: "412548441298",
+    appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+function sendMessage() {
+    const messageInput = document.getElementById('messageInput');
+    const message = messageInput.value;
+    if (message.trim() !== '') {
+        const messagesRef = database.ref('public_messages'); // Reference to the 'public_messages' node in the database
+        messagesRef.push({
+            sender: getCurrentUserUid(), // Assume you have a function to get the current user's UID
+            message: message,
+            timestamp: firebase.database.ServerValue.TIMESTAMP // Timestamp of the message
+        });
+        messageInput.value = '';
+    }
+}
+
+function getCurrentUserUid() {
+    const user = firebase.auth().currentUser;
+    if (user) {
+        return user.uid;
+    } else {
+        // User is not signed in
+        return null;
+    }
+}
+
+// Listen for new messages in the public chat
+database.ref('public_messages').on('child_added', (snapshot) => {
+    const messageData = snapshot.val();
+    // Handle received message
+    const messageElement = document.createElement('div');
+    messageElement.innerText = `${messageData.sender}: ${messageData.message}`;
+    document.getElementById('messages').appendChild(messageElement);
+});
+    </script>
 <script src="bootstrap.min.js"></script>
 <script src="custom.js"></script>
 </body></html>
