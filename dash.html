@@ -48,33 +48,7 @@ const userName2 = user.displayName;
         document.getElementById("userProfilePicture").src = userProfilePicture;
     }
 </script>
-<script defer type="module">
-import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
 
-// Reference to the Firebase database
-const database = getDatabase(app);
-
-// Function to send a message
-function sendMessage(message) {
-    const messagesRef = ref(database, 'public_messages'); // Reference to the 'public_messages' node in the database
-    push(messagesRef, {
-        sender: user.uid, // Sender's user ID
-        message: message,
-        timestamp: new Date().getTime() // Timestamp of the message
-    });
-}
-
-// Function to receive messages
-onChildAdded(ref(database, 'public_messages'), (snapshot) => {
-    const messageData = snapshot.val();
-    // Handle received message
-    console.log("Message received:", messageData.message);
-    console.log("Sent by:", messageData.sender);
-});
-
-// Example of sending a message
-sendMessage("Hello, world!");
-</script>
 </head>
 <body>
     <h1>Logged in as </h1>
