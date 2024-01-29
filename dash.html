@@ -32,23 +32,22 @@
             updateUserProfile(user);
         } else {
             // No user is signed in, prompt to create an account and log in
+            alert("Create Account & login");
             window.location.href = "index.html";
         }
     });
 
     function updateUserProfile(user) {
         const userName = user.displayName;
-const userName2 = user.displayName;
         const userEmail = user.email;
         const userProfilePicture = user.photoURL;
 
         // Update the UI elements with the user's info
         document.getElementById("userName").textContent = userName;
-      document.getElementById("userName2").textContent = userName2;  document.getElementById("userEmail").textContent = userEmail;
+        document.getElementById("userEmail").textContent = userEmail;
         document.getElementById("userProfilePicture").src = userProfilePicture;
     }
 </script>
-
 </head>
 <body>
     <h1>Logged in as </h1>
