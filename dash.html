@@ -50,65 +50,81 @@ const userName2 = user.displayName;
         document.getElementById("userProfilePicture").src = userProfilePicture;
     }
 </script>
+<script>
+const database = getDatabase(app); // Get a reference to the Firebase Realtime Database
+
+// Function to send a message
+function sendMessage() {
+    const messageInput = document.getElementById("messageInput");
+    const message = messageInput.value;
+    const uid = getCurrentUserUid(); // Call the function to get the current user's UID
+    if (uid) {
+        const messageData = {
+            uid: uid,
+            message: message,
+            timestamp: firebase.database.ServerValue.TIMESTAMP // Add a timestamp to the message
+        };
+
+        // Push the new message to the database
+        push(ref(database, 'public-messages'), messageData)
+            .then(() => {
+                // Clear the input field after sending the message
+                messageInput.value = "";
+            })
+            .catch((error) => {
+                console.error("Error sending message: ", error);
+                // Handle any errors that occur during the push operation
+            });
+    } else {
+        // Handle the case when the user is not signed in
+        console.log("User is not signed in");
+    }
+}
+
+// Function to display received messages
+function displayMessage(uid, message, timestamp) {
+    // Here, you can format and display the received messages as per your UI requirements
+    // For example, you can append the messages to the #messages div
+    const messageDiv = document.createElement("div");
+    messageDiv.textContent = message;
+    document.getElementById("messages").appendChild(messageDiv);
+}
+
+// Function to listen for new messages in the public chat
+function listenForMessages() {
+    const messagesRef = ref(database, 'public-messages');
+    onChildAdded(messagesRef, (snapshot) => {
+        const messageData = snapshot.val();
+        const { uid, message, timestamp } = messageData;
+        displayMessage(uid, message, timestamp);
+    });
+}
+
+// Call the function to start listening for new messages when the user is authenticated
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        updateUserProfile(user);
+        listenForMessages(); // Start listening for new messages when the user is authenticated
+    } else {
+        document.getElementById('customAlert').style.display = 'block';
+        window.location.href = "index.html";
+    }
+});
+<script>
 </head>
 <body>
     <h1>Logged in as </h1>
 <p id="userName"></p>
 <p id="userEmail"></p>
 <img id="userProfilePicture">
-
-<p id="userName2"></p>
-<h1>Welcome to the Public Chat</h1>
+<div>
+    <h2>Hi,<p id="userName2"></p>Welcome to Chat Room</h2>
     <div id="messages"></div>
-    <input type="text" id="messageInput" placeholder="Type your message...">
+    <input type="text" id="messageInput" />
     <button onclick="sendMessage()">Send</button>
-    <script type="module">
-        const firebaseConfig = {
-    apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",
-    authDomain: "register-71bde.firebaseapp.com",
-    projectId: "register-71bde",
-    storageBucket: "register-71bde.appspot.com",
-    messagingSenderId: "412548441298",
-    appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
-};
+</div>
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
 
-function sendMessage() {
-    const messageInput = document.getElementById('messageInput');
-    const message = messageInput.value;
-    if (message.trim() !== '') {
-        const messagesRef = database.ref('public_messages'); // Reference to the 'public_messages' node in the database
-        messagesRef.push({
-            sender: getCurrentUserUid(), // Assume you have a function to get the current user's UID
-            message: message,
-            timestamp: firebase.database.ServerValue.TIMESTAMP // Timestamp of the message
-        });
-        messageInput.value = '';
-    }
-}
-
-function getCurrentUserUid() {
-    const user = firebase.auth().currentUser;
-    if (user) {
-        return user.uid;
-    } else {
-        // User is not signed in
-        return null;
-    }
-}
-
-// Listen for new messages in the public chat
-database.ref('public_messages').on('child_added', (snapshot) => {
-    const messageData = snapshot.val();
-    // Handle received message
-    const messageElement = document.createElement('div');
-    messageElement.innerText = `${messageData.sender}: ${messageData.message}`;
-    document.getElementById('messages').appendChild(messageElement);
-});
-    </script>
 <script src="bootstrap.min.js"></script>
 <script src="custom.js"></script>
 </body></html>
