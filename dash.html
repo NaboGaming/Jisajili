@@ -49,6 +49,7 @@ const userName2 = user.displayName;
     }
 </script>
 <script defer type="module">
+import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
 const database = getDatabase(app); // Get a reference to the Firebase Realtime Database
 
 // Function to send a message
