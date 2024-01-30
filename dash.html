@@ -63,60 +63,6 @@
         document.getElementById("userEmail").textContent = userEmail;
         document.getElementById("userProfilePicture").src = userProfilePicture;
     }
- // Populate the form with the user's current display name
-            document.getElementById("displayName").value = userName;
-
-            // Event listener for the profile update form submission
-            document.getElementById("profileForm").addEventListener("submit", (e) => {
-                e.preventDefault();
-                const newDisplayName = document.getElementById("displayName").value;
-                const newProfilePicture = document.getElementById("profilePicture").files[0];
-
-                // Update user's display name in authentication profile
-                user.updateProfile({
-                    displayName: newDisplayName
-                }).then(() => {
-                    // Update the Firestore user document with the new display name
-                    const userDocRef = doc(db, "users", user.uid);
-                    const newData = {
-                        displayName: newDisplayName
-                    };
-                    return setDoc(userDocRef, newData, { merge: true });
-                }).then(() => {
-                    console.log("User profile updated successfully");
-                }).catch((error) => {
-                    console.error("Error updating user profile:", error);
-                });
-
-                // Update user's profile picture
-                if (newProfilePicture) {
-                    const storageRef = ref(storage, `profilePictures/${user.uid}/${newProfilePicture.name}`);
-                    uploadBytes(storageRef, newProfilePicture).then((snapshot) => {
-                        console.log("Profile picture uploaded");
-                        // Get the profile picture download URL
-                        getDownloadURL(snapshot.ref).then((downloadURL) => {
-                            // Update the user's profile picture in authentication profile and Firestore document
-                            user.updateProfile({
-                                photoURL: downloadURL
-                            }).then(() => {
-                                // Update the Firestore user document with the new profile picture
-                                const userDocRef = doc(db, "users", user.uid);
-                                const newData = {
-                                    profilePicture: downloadURL
-                                };
-                                return setDoc(userDocRef, newData, { merge: true });
-                            }).then(() => {
-                                console.log("User profile picture updated successfully");
-                            }).catch((error) => {
-                                console.error("Error updating user profile picture:", error);
-                            });
-                        });
-                    }).catch((error) => {
-                        console.error("Error uploading profile picture:", error);
-                    });
-                }
-            });
-        }
 </script>
 <link rel="stylesheet" type="text/css" href="bootstrap.css">
 <link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
@@ -160,14 +106,6 @@
 <div class="content text-center">
 <div class="px-3 mb-n3">
 <p class="text-center color-blue-dark text-uppercase font-800 font-20" style="margin: 0; padding: 0;" id="userName"></p>
-    <h2>Update Profile</h2>
-    <form id="profileForm">
-        <label for="displayName">Display Name:</label>
-        <input type="text" id="displayName" name="displayName">
-        <label for="profilePicture">Profile Picture:</label>
-        <input type="file" id="profilePicture" name="profilePicture">
-        <button type="submit">Update</button>
-    </form>
 <p class="mb-2 opacity-60 font-13">
 *Hii Siyo Version Ya Mwisho Kabisa, Tegemea Mabadiliko Muda Wowote.
 <span class="font-900" style="color: #121212;">Tutakutumia Mabadiliko Mapya Kwako <span id="userEmail">NaboGaming@gmail.com</span> | Pia Katika Kurasa Zetu Za <a href="">Facebook</a> na <a href="">Instagram</a>.</span>
