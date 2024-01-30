@@ -5,72 +5,65 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Karibu Tena NaboGaming | BetPlace</title>
 <script defer type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",
-  authDomain: "register-71bde.firebaseapp.com",
-  projectId: "register-71bde",
-  storageBucket: "register-71bde.appspot.com",
-  messagingSenderId: "412548441298",
-  appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
-};
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",
+        authDomain: "register-71bde.firebaseapp.com",
+        projectId: "register-71bde",
+        storageBucket: "register-71bde.appspot.com",
+        messagingSenderId: "412548441298",
+        appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
+    };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    updateUserProfile(user);
+    // Observe the user's login state
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // User is signed in, update the UI with the user's info
+            updateUserProfile(user);
 
-    const sendMessageForm = document.getElementById('sendMessageForm');
-    sendMessageForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const messageInput = document.getElementById('messageInput');
-      const message = messageInput.value;
-      sendPublicMessage(message);
-      messageInput.value = ''; // Clear the input field
+            // Store user data in Firestore
+            const userDocRef = doc(db, "users", user.uid);
+            const userDoc = {
+                displayName: user.displayName,
+                email: user.email,
+                profilePicture: user.photoURL,
+                // Add any other relevant user data here
+            };
+            setDoc(userDocRef, userDoc, { merge: true })
+                .then(() => {
+                    console.log("User data successfully written to Firestore!");
+                })
+                .catch((error) => {
+                    console.error("Error writing user data: ", error);
+                });
+
+        } else {
+            // No user is signed in, prompt to create an account and log in
+            alert("Create Account & login");
+            window.location.href = "index.html";
+        }
     });
 
-    const messagesRef = collection(db, 'publicMessages');
-    onSnapshot(messagesRef, (querySnapshot) => {
-      document.getElementById('publicMessages').innerHTML = ''; // Clear the previous messages
-      querySnapshot.forEach((doc) => {
-        const messageData = doc.data();
-        const messageItem = document.createElement('li');
-        messageItem.textContent = `${messageData.text} - ${messageData.user}`;
-        document.getElementById('publicMessages').appendChild(messageItem);
-      });
-    });
-  } else {
-    alert("Create Account & login");
-    window.location.href = "index.html";
-  }
-});
+    function updateUserProfile(user) {
+        const userName = user.displayName;
+        const userEmail = user.email;
+        const userProfilePicture = user.photoURL;
 
-function updateUserProfile(user) {
-  document.getElementById("userName").textContent = user.displayName;
-  document.getElementById("userEmail").textContent = user.email;
-  document.getElementById("userProfilePicture").src = user.photoURL;
-}
-
-function sendPublicMessage(message) {
-  const messagesCollection = collection(db, 'publicMessages');
-  addDoc(messagesCollection, {
-    text: message,
-    user: auth.currentUser.uid,
-    timestamp: new Date()
-  })
-  .then(() => {
-    console.log("Message sent successfully");
-  })
-  .catch((error) => {
-    console.error("Error sending message: ", error);
-  });
-}
+        // Update the UI elements with the user's info
+        document.getElementById("userName").textContent = userName;
+        document.getElementById("userEmail").textContent = userEmail;
+        document.getElementById("userProfilePicture").src = userProfilePicture;
+    }
+    
 </script>
 <link rel="stylesheet" type="text/css" href="bootstrap.css">
 <link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
