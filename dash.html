@@ -1,112 +1,92 @@
-<!DOCTYPE html><html lang="en"><head>
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta id="theme-check" name="theme-color" content="black">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta id="theme-check" name="theme-color" content="black">
     <link rel="stylesheet" type="text/css" href="bootstrap.css">
-<link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>Karibu NaboGaming | BetPlace</title>
-<script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js"></script>
-<script defer type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+    <link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
+    <title>Karibu NaboGaming | BetPlace</title>
+    <script defer type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js";
 
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",
-        authDomain: "register-71bde.firebaseapp.com",
-        projectId: "register-71bde",
-        storageBucket: "register-71bde.appspot.com",
-        messagingSenderId: "412548441298",
-        appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
-    };
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_VKdV-KsIzUiOb7jFLsYXdTsuGkLiS-Q",
+            authDomain: "register-71bde.firebaseapp.com",
+            projectId: "register-71bde",
+            storageBucket: "register-71bde.appspot.com",
+            messagingSenderId: "412548441298",
+            appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
+        };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
 
-    // Observe the user's login state
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            // User is signed in, update the UI with the user's info
-            updateUserProfile(user);
-        } else {
-            // No user is signed in, prompt to create an account and log in
-            alert("Create Account & login");
-            window.location.href = "index.html";
+        // Observe the user's login state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, update the UI with the user's info
+                updateUserProfile(user);
+                saveUserDataToDatabase(user);
+                displayUserList();
+            } else {
+                // No user is signed in, prompt to create an account and log in
+                alert("Create Account & login");
+                window.location.href = "index.html";
+            }
+        });
+
+        function updateUserProfile(user) {
+            const userName = user.displayName;
+            const userEmail = user.email;
+            const userProfilePicture = user.photoURL;
+
+            // Update the UI elements with the user's info
+            document.getElementById("userName").textContent = userName;
+            document.getElementById("userEmail").textContent = userEmail;
+            document.getElementById("userProfilePicture").src = userProfilePicture;
         }
-    });
 
-    function updateUserProfile(user) {
-        const userName = user.displayName;
-        const userEmail = user.email;
-        const userProfilePicture = user.photoURL;
+        function saveUserDataToDatabase(user) {
+            const usersRef = ref(database, 'users/' + user.uid);
+            set(usersRef, {
+                name: user.displayName,
+                email: user.email,
+                profilePicture: user.photoURL
+            });
+        }
 
-        // Update the UI elements with the user's info
-        document.getElementById("userName").textContent = userName;
-        document.getElementById("userEmail").textContent = userEmail;
-        document.getElementById("userProfilePicture").src = userProfilePicture;
-    }
-// Save the user information to the database
-function saveUserDataToDatabase(user) {
-  const database = firebase.database();
-  const usersRef = database.ref('users/' + user.uid);
+        function displayUserList() {
+            const usersRef = ref(database, 'users');
+            onValue(usersRef, (snapshot) => {
+                const users = snapshot.val();
+                const userListElement = document.getElementById("userList");
+                userListElement.innerHTML = ''; // Clear the previous list
 
-  usersRef.set({
-    name: user.displayName,
-    email: user.email,
-    profilePicture: user.photoURL
-  });
-}
-</script>
+                for (let userId in users) {
+                    const user = users[userId];
+                    const userItem = document.createElement("li");
+                    userItem.textContent = user.name;
+                    userListElement.appendChild(userItem);
+                }
+            });
+        }
+    </script>
 </head>
 <body>
-<div id="userList"></div>
     <h1>Logged in as </h1>
-<p id="userName"></p>
-<p id="userEmail"></p>
-<img id="userProfilePicture">
-<script>// Display the user list
-function displayUserList() {
-  const database = firebase.database();
-  const usersRef = database.ref('users');
-
-  usersRef.on('value', function(snapshot) {
-      const userList = snapshot.val();
-
-      for (const userId in userList) {
-          const user = userList[userId];
-          const userName = user.name;
-          const userProfilePicture = user.profilePicture;
-
-          addUserToUI(userName, userProfilePicture);
-      }
-  });
-}
-
-function addUserToUI(userName, userProfilePicture) {
-  // Create HTML elements to display the user
-  const userContainer = document.createElement('div');
-  userContainer.classList.add('user');
-
-  const userNameElement = document.createElement('h3');
-  userNameElement.textContent = userName;
-
-  const userProfilePictureElement = document.createElement('img');
-  userProfilePictureElement.src = userProfilePicture;
-
-  // Append the elements to the user list container on your website
-  userContainer.appendChild(userNameElement);
-  userContainer.appendChild(userProfilePictureElement);
-
-  document.getElementById('userList').appendChild(userContainer);
-}
-
-// Call the function to display the user list when the page loads
-window.onload = function() {
-  displayUserList();
-}</script>
-<script src="bootstrap.min.js"></script>
-<script src="custom.js"></script>
-</body></html>
+    <p id="userName"></p>
+    <p id="userEmail"></p>
+    <img id="userProfilePicture">
+    <h2>User List</h2>
+    <ul id="userList"></ul>
+    <script src="bootstrap.min.js"></script>
+    <script src="custom.js"></script>
+</body>
+</html>
