@@ -7,6 +7,7 @@
 <link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Karibu NaboGaming | BetPlace</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js"></script>
 <script defer type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
     import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
@@ -47,13 +48,65 @@
         document.getElementById("userEmail").textContent = userEmail;
         document.getElementById("userProfilePicture").src = userProfilePicture;
     }
+// Save the user information to the database
+function saveUserDataToDatabase(user) {
+  const database = firebase.database();
+  const usersRef = database.ref('users/' + user.uid);
+
+  usersRef.set({
+    name: user.displayName,
+    email: user.email,
+    profilePicture: user.photoURL
+  });
+}
 </script>
 </head>
 <body>
+<div id="userList"></div>
     <h1>Logged in as </h1>
 <p id="userName"></p>
 <p id="userEmail"></p>
 <img id="userProfilePicture">
+<script>// Display the user list
+function displayUserList() {
+  const database = firebase.database();
+  const usersRef = database.ref('users');
+
+  usersRef.on('value', function(snapshot) {
+      const userList = snapshot.val();
+
+      for (const userId in userList) {
+          const user = userList[userId];
+          const userName = user.name;
+          const userProfilePicture = user.profilePicture;
+
+          addUserToUI(userName, userProfilePicture);
+      }
+  });
+}
+
+function addUserToUI(userName, userProfilePicture) {
+  // Create HTML elements to display the user
+  const userContainer = document.createElement('div');
+  userContainer.classList.add('user');
+
+  const userNameElement = document.createElement('h3');
+  userNameElement.textContent = userName;
+
+  const userProfilePictureElement = document.createElement('img');
+  userProfilePictureElement.src = userProfilePicture;
+
+  // Append the elements to the user list container on your website
+  userContainer.appendChild(userNameElement);
+  userContainer.appendChild(userProfilePictureElement);
+
+  document.getElementById('userList').appendChild(userContainer);
+}
+
+// Call the function to display the user list when the page loads
+window.onload = function() {
+  displayUserList();
+}</script>
 <script src="bootstrap.min.js"></script>
 <script src="custom.js"></script>
 </body></html>
