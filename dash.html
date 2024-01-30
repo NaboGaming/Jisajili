@@ -37,7 +37,7 @@
                 displayUserList();
             } else {
                 // No user is signed in, prompt to create an account and log in
-                alert("Create Account & login");
+                displayCustomAlert();
                 window.location.href = "index.html";
             }
         });
@@ -77,9 +77,20 @@
                 }
             });
         }
+function displayCustomAlert() {
+  var modal = document.getElementById('customAlertModal');
+  modal.style.display = "block";
+  setTimeout(function() {
+      modal.style.display = "none";
+      window.location.href = "index.html"; // Redirect to the login page
+  }, 3000); // Close the modal after 3 seconds
+}
     </script>
 </head>
 <body>
+  <div class="modal-content">
+    <p>You are not logged in. Please log in to access this page.</p>
+  </div>
     <h1>Logged in as </h1>
     <p id="userName"></p>
     <p id="userEmail"></p>
