@@ -6,7 +6,8 @@
 <title>Karibu Tena NaboGaming | BetPlace</title>
 <script defer type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
 
     // Your web app's Firebase configuration
     const firebaseConfig = {
@@ -21,12 +22,30 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     // Observe the user's login state
     onAuthStateChanged(auth, (user) => {
         if (user) {
             // User is signed in, update the UI with the user's info
             updateUserProfile(user);
+
+            // Store user data in Firestore
+            const userDocRef = doc(db, "users", user.uid);
+            const userDoc = {
+                displayName: user.displayName,
+                email: user.email,
+                profilePicture: user.photoURL,
+                // Add any other relevant user data here
+            };
+            setDoc(userDocRef, userDoc, { merge: true })
+                .then(() => {
+                    console.log("User data successfully written to Firestore!");
+                })
+                .catch((error) => {
+                    console.error("Error writing user data: ", error);
+                });
+
         } else {
             // No user is signed in, prompt to create an account and log in
             alert("Create Account & login");
@@ -44,21 +63,7 @@
         document.getElementById("userEmail").textContent = userEmail;
         document.getElementById("userProfilePicture").src = userProfilePicture;
     }
-// Save the user information to the database
-function saveUserDataToDatabase(user) {
-  const database = firebase.database();
-  const usersRef = database.ref('users/' + user.uid);
-
-  usersRef.set({
-    name: user.displayName,
-    email: user.email,
-    profilePicture: user.photoURL
-  });
-}
 </script>
-<script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js"></script>
 <link rel="stylesheet" type="text/css" href="bootstrap.css">
 <link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
 <link rel="preconnect" href="https://fonts.gstatic.com">
