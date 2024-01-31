@@ -52,19 +52,31 @@
             window.location.href = "index.html";
         }
     });
-
-    function updateUserProfile(user) {
+// Add an event listener for the page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to update the user profile when the page loads
+    function updateUserProfileOnPageLoad(user) {
         const userName = user.displayName;
         const userEmail = user.email;
         const userProfilePicture = user.photoURL;
 
-        // Update the UI elements with the user's info
+        // Update the user information on the page
         document.getElementById("userName").textContent = userName;
-document.getElementById("userName2").textContent = userName;
         document.getElementById("userEmail").textContent = userEmail;
         document.getElementById("userProfilePicture").src = userProfilePicture;
     }
-    
+
+    // Ensure the user is authenticated
+    const auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            updateUserProfileOnPageLoad(user);
+        } else {
+            alert("Create Account & login");
+            window.location.href = "index.html";
+        }
+    });
+});
 </script>
 <link rel="stylesheet" type="text/css" href="bootstrap.css">
 <link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
