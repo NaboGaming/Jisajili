@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="en"><head>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Jiunge NaboGaming</title>
+<script defer type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.5/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.6.5/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_VKdV-KsIzUi0b7jFLsYXdTsuGkLiS-Q",
+    authDomain: "register-71bde.firebaseapp.com",
+    projectId: "register-71bde",
+    storageBucket: "register-71bde.appspot.com",
+    messagingSenderId: "412548441298",
+    appId: "1:412548441298:web:e0fb2b6c5fbd4af7d0b90b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  auth.languageCode = "en";
+  
+  const provider = new GoogleAuthProvider();
+  const googleLogin = document.getElementById("google");
+
+  googleLogin.addEventListener("click", function() {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const user = result.user;
+        console.log(user);
+        window.location.href = "https://nabogaming.github.io/Dashboard/";
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // Handle error
+      });
+  });
+</script>
+<link rel="stylesheet" type="text/css" href="bootstrap.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&amp;family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link rel="manifest" href="_manifest.json">
+<meta id="theme-check" name="theme-color" content="black">
+<link rel="apple-touch-icon" sizes="180x180" href="images/icon-192x192.png"></head>
+<body class="theme-light">
+<div id="preloader"><div class="spinner-border color-highlight" role="status"></div></div>
+</div>
+<div id="page">
+<div class="page-content header-clear-medium">
+  <div class="page-content header-clear-medium">  <div class="page-content header-clear-medium">   <div class="page-content header-clear-small">
+<div class="card card-style">
+<div class="content">
+    <div class="card-top">
+          <img src="logo2.gif" width="40" height="40">
+    </div>
+<h1 class="text-center font-30 mb-2">JIUNGE NASI LEO</h1>
+<p class="text-center font-13 mt-n2 mb-3">Ili kuendelea yahitaji kuweka akaunti yako.</p>
+<div class="row">
+<div class="col-6">
+<a href="#"  class="btn btn-s rounded-xs font-16 btn-full btn-border shadow-bg shadow-bg-l gradient-blue color-white"><i class="bi bi-phone"></i></a>
+</div>
+<div class="col-6">
+<a href="#" id="google" class="btn btn-s text-uppercase rounded-xs font-16 font-700 btn-full btn-border bg-black shadow-bg shadow-bg-s color-white"><i class="bi bi-google color-blue"></i></a>
+</div>
+</div>
+<p class="text-center font-1"></p>
+</div>
+</div>
+</div>
+</div>
+<div class="offcanvas offcanvas-bottom rounded-m offcanvas-detached" id="menu-install-pwa-ios">
+<div class="content">
+<img src="images/icon-128x128.png" alt="img" width="80" class="rounded-l mx-auto my-4">
+<h1 class="text-center font-800 font-20">Weka NaboGaming Kama App Yako</h1>
+<p class="boxed-text-xl">
+  Sasa Unaweza Kuinstall Hii Website Kama App Yako Kwenye Simu Yako, 
+Fungua Menu Ya Safari App Yako Na Ubonye "Add to home screen".
+</p>
+<a href="#" class="pwa-dismiss close-menu gradient-blue shadow-bg shadow-bg-s btn btn-s btn-full text-uppercase font-700  mt-n2" data-bs-dismiss="offcanvas">Labda Badae</a>
+</div>
+</div>
+<div class="offcanvas offcanvas-bottom rounded-m offcanvas-detached" id="menu-install-pwa-android">
+<div class="content">
+<img src="images/icon-128x128.png" alt="img" width="80" class="rounded-m mx-auto my-4">
+<h1 class="text-center font-700 font-20">Weka NaboGaming Kama App Yako</h1>
+<p class="boxed-text-l">
+Sasa Unaweza Kuinstall Hii Website Kama App Yako Kwenye Simu Yako, 
+Kubali Sasa Na Uweze Install App Ya NaboGaming.
+</p>
+<a href="#" class="pwa-install btn btn-m rounded-s text-uppercase font-900 gradient-highlight shadow-bg shadow-bg-s btn-full">Install App</a><br>
+<a href="#" data-bs-dismiss="offcanvas" class="pwa-dismiss close-menu color-theme text-uppercase font-900 opacity-50 font-11 text-center d-block mt-n1">Labda Badae</a>
+</div>
+</div>
+</div>
+<script src="bootstrap.min.js"></script>
+<script src="custom.js"></script>
+</body></html>
